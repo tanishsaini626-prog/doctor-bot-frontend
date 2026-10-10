@@ -1,16 +1,66 @@
-# React + Vite
+# MediBot Dashboard (React + Vite + Tailwind)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+The admin dashboard for the AI voice appointment bot: live stats, search,
+status filters, a dark mode and a patient detail modal.
 
-Currently, two official plugins are available:
+## Run it
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+```bash
+npm install
+cp .env.example .env      # optional - only needed for a non-local API
+npm run dev               # http://localhost:5173
+```
 
-## React Compiler
+The backend must be running on `http://localhost:5000` (see `doctor-bot-backend`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Configure the API URL
 
-## Expanding the ESLint configuration
+`src/App.jsx` reads the API base from `VITE_API_URL` and falls back to
+`http://localhost:5000`:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+```
+# .env
+VITE_API_URL=https://your-backend.onrender.com
+```
+
+Restart `npm run dev` after changing it (Vite reads `.env` at startup).
+
+## The Tailwind bug that was here (fixed)
+
+`tailwind.config.js` had `content: []`. An empty `content` array makes Tailwind
+scan **no files**, so it generated **zero** utility classes and the page rendered
+as plain unstyled HTML. It now points at the real files:
+
+```js
+content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
+darkMode: 'class',
+```
+
+Two notes for later:
+
+- Dark mode uses the `class` strategy, so `src/App.jsx` adds/removes the `dark`
+  class on `<html>` (not on a random `<div>`). Without that class the `dark:`
+  styles never activate.
+- After editing `tailwind.config.js`, restart the dev server and hard-refresh
+  the browser.
+
+## Verify the styles are really being generated
+
+```bash
+npm run build
+npm run verify:css
+```
+
+`verify:css` inspects the built CSS bundle and prints how many `dark:`, `hover:`
+and responsive (`md:`, `xl:`) rules it contains. If those numbers are 0, Tailwind
+is not scanning your files.
+
+## API endpoints used
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/appointments` | table + cards (`?status=&q=&date=&limit=`) |
+| PATCH | `/api/appointments/:id` | mark an appointment `Completed` / `Cancelled` |
+
+The page still works with the older backend that returns only
+`{ name, date, reason, time_slot }` - status is then derived from the date.
