@@ -1,7 +1,19 @@
 # MediBot Dashboard (React + Vite + Tailwind)
 
-The admin dashboard for the AI voice appointment bot: live stats, search,
-status filters, a dark mode and a patient detail modal.
+The clinic dashboard for the AI voice appointment bot.
+
+## Pages
+
+| Route | Access | What it shows |
+|---|---|---|
+| `/login` | public | email + password sign-in |
+| `/` | 🔒 login required | stats cards, search, status filters, appointments table, patient modal with Done/Cancel |
+| `/calls` | 🔒 login required | call log: every phone call with its transcript and what the bot did |
+
+Everything except `/login` is wrapped in `RequireAuth`, so visiting a protected
+URL while logged out bounces you to the login page (and back after signing in).
+An expired or invalid token triggers the same redirect automatically (axios 401
+interceptor in `src/api.js`).
 
 ## Run it
 
@@ -13,9 +25,13 @@ npm run dev               # http://localhost:5173
 
 The backend must be running on `http://localhost:5000` (see `doctor-bot-backend`).
 
+**First login:** the backend creates an admin account on its first boot —
+`admin@medibot.local` / `medibot-admin` (change it with `ADMIN_EMAIL` /
+`ADMIN_PASSWORD` in the backend `.env`).
+
 ## Configure the API URL
 
-`src/App.jsx` reads the API base from `VITE_API_URL` and falls back to
+`src/api.js` reads the API base from `VITE_API_URL` and falls back to
 `http://localhost:5000`:
 
 ```
@@ -24,6 +40,19 @@ VITE_API_URL=https://your-backend.onrender.com
 ```
 
 Restart `npm run dev` after changing it (Vite reads `.env` at startup).
+
+## File map
+
+```
+src/
+├── api.js              axios instance: base URL, Bearer token, 401 -> /login
+├── AuthContext.jsx     token + user state, login(), logout(), /api/me check
+├── App.jsx             router: /login, / (Dashboard), /calls (CallLog)
+└── pages/
+    ├── Login.jsx       sign-in form
+    ├── Dashboard.jsx   stats, filters, table, patient modal
+    └── CallLog.jsx     call transcripts + bot actions
+```
 
 ## The Tailwind bug that was here (fixed)
 
