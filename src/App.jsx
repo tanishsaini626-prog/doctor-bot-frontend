@@ -10,6 +10,7 @@ import DoctorManager from './pages/DoctorManager';
 import Analytics from './pages/Analytics';
 import ClinicSettings from './pages/ClinicSettings';
 import Login from './pages/Login';
+import Landing from './pages/Landing';
 
 function RequireAuth({ children }) {
   const { isLoggedIn, checking } = useAuth();
@@ -40,6 +41,7 @@ function AppRoutes() {
 
   return (
     <Routes>
+      <Route path="/landing" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route
         path="/"
