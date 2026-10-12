@@ -1,18 +1,23 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AuthProvider, useAuth } from './AuthContext';
+import Layout from './pages/Layout';
 import Dashboard from './pages/Dashboard';
+import Calendar from './pages/Calendar';
 import CallLog from './pages/CallLog';
+import Patients from './pages/Patients';
+import DoctorManager from './pages/DoctorManager';
+import Analytics from './pages/Analytics';
+import ClinicSettings from './pages/ClinicSettings';
 import Login from './pages/Login';
 
-/** Sends anyone without a token to the login page (and remembers where they were going). */
 function RequireAuth({ children }) {
   const { isLoggedIn, checking } = useAuth();
   const location = useLocation();
 
   if (checking) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 text-gray-400">
+      <div className="min-h-screen flex items-center justify-center bg-slate-900 text-slate-400">
         Checking your session...
       </div>
     );
@@ -21,7 +26,6 @@ function RequireAuth({ children }) {
   return children;
 }
 
-/** Keeps the theme preference for the whole app (login page included). */
 function useTheme() {
   const [darkMode, setDarkMode] = useState(() => localStorage.getItem('medibot-theme') === 'dark');
   useEffect(() => {
@@ -33,11 +37,80 @@ function useTheme() {
 
 function AppRoutes() {
   const [darkMode, setDarkMode] = useTheme();
+
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
-      <Route path="/" element={<RequireAuth><Dashboard darkMode={darkMode} setDarkMode={setDarkMode} /></RequireAuth>} />
-      <Route path="/calls" element={<RequireAuth><CallLog darkMode={darkMode} setDarkMode={setDarkMode} /></RequireAuth>} />
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <Layout title="Appointments Dashboard" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <Dashboard />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/calendar"
+        element={
+          <RequireAuth>
+            <Layout title="Calendar Schedule" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <Calendar />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/calls"
+        element={
+          <RequireAuth>
+            <Layout title="Voice Call History" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <CallLog darkMode={darkMode} setDarkMode={setDarkMode} />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/patients"
+        element={
+          <RequireAuth>
+            <Layout title="Patients Directory" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <Patients />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/doctors"
+        element={
+          <RequireAuth>
+            <Layout title="Doctor Management" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <DoctorManager />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/analytics"
+        element={
+          <RequireAuth>
+            <Layout title="Analytics & Reports" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <Analytics />
+            </Layout>
+          </RequireAuth>
+        }
+      />
+      <Route
+        path="/settings"
+        element={
+          <RequireAuth>
+            <Layout title="Clinic Settings" darkMode={darkMode} setDarkMode={setDarkMode}>
+              <ClinicSettings />
+            </Layout>
+          </RequireAuth>
+        }
+      />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
