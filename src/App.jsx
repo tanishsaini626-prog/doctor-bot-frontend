@@ -41,10 +41,10 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/landing" element={<Landing />} />
+      <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route
-        path="/"
+        path="/app"
         element={
           <RequireAuth>
             <Layout title="Appointments Dashboard" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -54,7 +54,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/calendar"
+        path="/app/calendar"
         element={
           <RequireAuth>
             <Layout title="Calendar Schedule" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -64,7 +64,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/calls"
+        path="/app/calls"
         element={
           <RequireAuth>
             <Layout title="Voice Call History" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -74,7 +74,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/patients"
+        path="/app/patients"
         element={
           <RequireAuth>
             <Layout title="Patients Directory" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -84,7 +84,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/doctors"
+        path="/app/doctors"
         element={
           <RequireAuth>
             <Layout title="Doctor Management" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -94,7 +94,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/analytics"
+        path="/app/analytics"
         element={
           <RequireAuth>
             <Layout title="Analytics & Reports" darkMode={darkMode} setDarkMode={setDarkMode}>
@@ -104,7 +104,7 @@ function AppRoutes() {
         }
       />
       <Route
-        path="/settings"
+        path="/app/settings"
         element={
           <RequireAuth>
             <Layout title="Clinic Settings" darkMode={darkMode} setDarkMode={setDarkMode}>

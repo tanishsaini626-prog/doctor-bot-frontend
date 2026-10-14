@@ -14,7 +14,7 @@ export default function Login() {
   const [busy, setBusy] = useState(false);
   const [hint, setHint] = useState(null);   // { admin_email } when the demo password is still active
 
-  const from = location.state?.from?.pathname || '/';
+  const from = location.state?.from?.pathname || '/app';
 
   // On a brand-new install, show the generated admin account instead of leaving
   // the user staring at "Invalid email or password".

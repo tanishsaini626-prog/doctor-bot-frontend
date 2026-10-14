@@ -92,7 +92,7 @@ export default function Dashboard({ darkMode, setDarkMode }) {
           <div className="bg-blue-600 text-white p-3 rounded-lg flex items-center gap-3 cursor-pointer">
             <Calendar size={20} /> Dashboard
           </div>
-          <Link to="/calls" className="p-3 rounded-lg flex items-center gap-3 hover:bg-slate-700 transition-colors">
+          <Link to="/app/calls" className="p-3 rounded-lg flex items-center gap-3 hover:bg-slate-700 transition-colors">
             <PhoneCall size={20} /> Call Log
           </Link>
           <div className="p-3 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-slate-700 transition-colors">

@@ -18,13 +18,13 @@ import {
 import { useAuth } from '../AuthContext';
 
 const NAV_ITEMS = [
-  { to: '/', label: 'Appointments', icon: CalendarIcon },
-  { to: '/calendar', label: 'Calendar View', icon: Clock },
-  { to: '/calls', label: 'Call Log', icon: PhoneCall },
-  { to: '/patients', label: 'Patients Directory', icon: Users },
-  { to: '/doctors', label: 'Doctors', icon: Stethoscope },
-  { to: '/analytics', label: 'Analytics & Reports', icon: BarChart3 },
-  { to: '/settings', label: 'Clinic Settings', icon: Settings },
+  { to: '/app', label: 'Appointments', icon: CalendarIcon },
+  { to: '/app/calendar', label: 'Calendar View', icon: Clock },
+  { to: '/app/calls', label: 'Call Log', icon: PhoneCall },
+  { to: '/app/patients', label: 'Patients Directory', icon: Users },
+  { to: '/app/doctors', label: 'Doctors', icon: Stethoscope },
+  { to: '/app/analytics', label: 'Analytics & Reports', icon: BarChart3 },
+  { to: '/app/settings', label: 'Clinic Settings', icon: Settings },
 ];
 
 export default function Layout({ children, darkMode, setDarkMode, title, actions }) {
