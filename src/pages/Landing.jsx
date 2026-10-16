@@ -113,7 +113,12 @@ export default function Landing() {
       setForm({ name: '', clinic: '', phone: '', email: '', message: '', consent: false });
     } catch (err) {
       setState('error');
-      setError(err.message || 'Could not send your request. Please try again.');
+      // Network failures surface as "Failed to fetch" - translate for real people.
+      setError(
+        err.message === 'Failed to fetch'
+          ? 'We could not reach the booking system just now. Please try again in a minute.'
+          : (err.message || 'Could not send your request. Please try again.')
+      );
     }
   }
 
