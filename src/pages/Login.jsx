@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Activity, LogIn, AlertTriangle, KeyRound } from 'lucide-react';
+import { Activity, LogIn, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../AuthContext';
-import { API_URL } from '../api';
 
 export default function Login() {
   const { login } = useAuth();
@@ -12,20 +11,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [hint, setHint] = useState(null);   // { admin_email } when the demo password is still active
 
   const from = location.state?.from?.pathname || '/app';
-
-  // On a brand-new install, show the generated admin account instead of leaving
-  // the user staring at "Invalid email or password".
-  useEffect(() => {
-    let cancelled = false;
-    fetch(`${API_URL}/api/auth/bootstrap`)
-      .then((r) => r.json())
-      .then((data) => { if (!cancelled && data.first_run) setHint(data); })
-      .catch(() => { /* backend down - the login error will explain it */ });
-    return () => { cancelled = true; };
-  }, []);
 
   async function onSubmit(e) {
     e.preventDefault();
@@ -37,18 +24,9 @@ export default function Login() {
     } catch (err) {
       const msg = err.response?.data?.error || `Cannot reach the API (${err.message})`;
       setError(msg);
-      if (err.response?.status === 401 && hint?.admin_email && email.trim().toLowerCase() !== hint.admin_email) {
-        setError(`${msg}. The account on this server is ${hint.admin_email}.`);
-      }
     } finally {
       setBusy(false);
     }
-  }
-
-  function useDemoAccount() {
-    setEmail(hint.admin_email);
-    setPassword('medibot-admin');
-    setError('');
   }
 
   return (
@@ -64,23 +42,6 @@ export default function Login() {
 
         <form onSubmit={onSubmit} className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-8 space-y-5">
           <h2 className="text-xl font-semibold text-gray-800 dark:text-white">Sign in</h2>
-
-          {hint?.admin_email && (
-            <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-3 text-sm text-blue-800 dark:border-blue-900 dark:bg-blue-900/30 dark:text-blue-200">
-              <div className="flex items-center gap-2 font-medium mb-1">
-                <KeyRound size={15} /> First run: use the admin account
-              </div>
-              <p className="font-mono text-xs break-all">{hint.admin_email}</p>
-              <p className="font-mono text-xs">medibot-admin</p>
-              <button
-                type="button"
-                onClick={useDemoAccount}
-                className="mt-2 text-xs font-semibold underline hover:no-underline"
-              >
-                Fill these in for me
-              </button>
-            </div>
-          )}
 
           {error && (
             <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-900 dark:bg-red-900/30 dark:text-red-300">
@@ -112,7 +73,7 @@ export default function Login() {
             <input
               id="password"
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
               required
               value={password}
               onChange={(e) => setPassword(e.target.value)}

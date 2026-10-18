@@ -3,15 +3,41 @@ import api, { setSession, clearSession, getToken, getUser } from './api';
 
 const AuthContext = createContext(null);
 
+/** Decode a JWT payload (base64url) without verifying the signature. */
+function decodeJwt(token) {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return null;
+    return JSON.parse(atob(payload.replace(/-/g, '+').replace(/_/g, '/')));
+  } catch {
+    return null;
+  }
+}
+
+/** Returns true if the JWT is expired (or malformed). */
+function isTokenExpired(token) {
+  const payload = decodeJwt(token);
+  if (!payload || !payload.exp) return true; // treat unknown as expired
+  return Date.now() >= payload.exp * 1000;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => getUser());
   const [token, setToken] = useState(() => getToken());
   const [checking, setChecking] = useState(() => !!getToken());
 
   // Confirm the stored token is still valid when the app opens.
+  // First do a client-side expiry check so we don't hit the API with stale tokens.
   useEffect(() => {
     let cancelled = false;
     if (!token) { setChecking(false); return; }
+    if (isTokenExpired(token)) {
+      clearSession();
+      setToken(null);
+      setUser(null);
+      setChecking(false);
+      return;
+    }
     api.get('/api/me')
       .then(({ data }) => { if (!cancelled) setUser(data); })
       .catch(() => { if (!cancelled) { clearSession(); setUser(null); setToken(null); } })
